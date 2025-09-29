@@ -6,13 +6,15 @@ package dnd.hippolinc.dmstuff;
 import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
-    //Monster cyan = new Monster("cyan", "clubs", 1, 0);
+        Monster cyan = new Monster("cyan", "clubs", 1, 0);
 
-    Scanner input = new Scanner(System.in);  // Create a Scanner object
-    System.out.println("Enter a suit");
+        Scanner input = new Scanner(System.in);  // Create a Scanner object
+        System.out.println("Enter a suit");
 
-    String suit = input.nextLine();  // Read user input
+        String suit = input.nextLine();  // Read user input
+        System.out.println(cyan.getSuit());
+        cyan.setSuit(suit);
+        System.out.println(cyan.getSuit());
     }
 }

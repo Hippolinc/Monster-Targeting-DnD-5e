@@ -15,19 +15,24 @@ public class Monster {
         this.timesFailed = timesFailed;
     }
 
-    public static String getColor() {
+    public String getColor() {
         return color;
     }
     
-    public static String getSuit() {
+    public String getSuit() {
         return suit;
     }  
     
-    public static int getMonsterInSuit() {
+    public int getMonsterInSuit() {
         return monstersInSuit;
     }
 
-    public static int getTimesFailed() {
+    public int getTimesFailed() {
         return timesFailed;
     }
+
+    public void setSuit(String suit) {
+    this.suit = suit;
+    } 
 }
+
