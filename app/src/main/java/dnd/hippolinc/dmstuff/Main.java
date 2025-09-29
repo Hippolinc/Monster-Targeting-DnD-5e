@@ -3,18 +3,84 @@
  */
 package dnd.hippolinc.dmstuff;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Monster cyan = new Monster("cyan", "clubs", 1, 0);
+        Scanner input = new Scanner(System.in);
+        
+        ArrayList<Monster> monsters = new ArrayList<Monster>();
+        ArrayList<Player> players = new ArrayList<Player>();
 
-        Scanner input = new Scanner(System.in);  // Create a Scanner object
-        System.out.println("Enter a suit");
 
-        String suit = input.nextLine();  // Read user input
-        System.out.println(cyan.getSuit());
-        cyan.setSuit(suit);
-        System.out.println(cyan.getSuit());
+        System.out.println("Hello this is Lincoln's auto targeting program to find out who in your wonderful party is being targeted");
+        System.out.println("This does use a deck of cards, high number is targeted first and the monsters only target creatures in their suit");
+        System.out.println("You will need atleast one player and one monster");
+        System.out.println("You can do the following with this program like create a player, create a monster, or update the hunt status");
+        System.out.println("Enter the following words for each differnt program function: player, monster, or hunt");
+        System.out.println("You can also enter stop to stop the program");
+        for (int i = 0; i >= 0; i+=1){
+            System.out.println("Please enter if you would like to create a player, create a monster, update the hunt status, or stop");
+            String choice = input.nextLine();
+            if (choice.equalsIgnoreCase("monster")){
+                System.out.println("Please enter the name of the creature:");
+                String name = input.nextLine(); 
+                System.out.println("Please enter the suit of the creauture:");
+                String suit = input.nextLine();
+                System.out.println("Please enter the number of creatures in the same suit:");
+                int monstersInSuit = input.nextInt();
+                System.out.println("Please enter the number of times this creature has failed the hunt since the last time it changed suit:");
+                int timesFailed = input.nextInt();
+                Monster monster = new Monster(name, suit, monstersInSuit, timesFailed);
+                monsters.add(monster);
+                for (int j = 0; j < monsters.size(); j++){
+                    System.out.println(monsters.get(j).getSuit());
+                }
+            }
+            else if (choice.equalsIgnoreCase("player")){
+                System.out.println("Please enter the name of the player:");
+                String name = input.nextLine(); 
+                System.out.println("Please enter the suit of the player:");
+                String suit = input.nextLine();
+                System.out.println("Please enter the number on their card:");
+                int priotityNumber = input.nextInt();
+                Player player = new Player(name, suit, priotityNumber);
+                players.add(player);
+                for (int j = 0; j < players.size(); j++){
+                    System.out.println(players.get(j).getSuit());
+                }
+            }
+            else if (choice.equalsIgnoreCase("hunt")){
+                System.out.println("Please enter the name of the creature");
+                String name = input.nextLine(); 
+                for (int j = 0; j < monsters.size(); j++){
+                    if (name.equalsIgnoreCase(monsters.get(j).getName())){
+                        if (monsters.get(j).getTimesFailed() >= 3){
+                            System.out.println("Creature failed too many times");
+                            System.out.println("Draw a new card and enter the suit");
+                            String suit = input.nextLine();
+                            monsters.get(j).setSuit(suit);
+                        } 
+                        else {
+                            System.out.println("Creature hasen't failed enough");
+                            monsters.get(j).increaseTimesFailed();
+
+                        }
+                    }
+                    else if (j == monsters.size()-1){
+                        System.out.println("No creature with that name");
+                    }
+                }
+            }
+            else if (choice.equalsIgnoreCase("stop")){
+                break;
+            }
+        }
+
+        // String suit = input.nextLine();  // Read user input
+        // System.out.println(cyan.getSuit());
+        // cyan.setSuit(suit);
+        // System.out.println(cyan.getSuit());
     }
 }
