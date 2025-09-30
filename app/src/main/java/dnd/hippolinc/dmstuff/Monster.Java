@@ -50,6 +50,10 @@ public class Monster{
     public void increaseMonstersInSuit() {
         monstersInSuit += 1;
     }
+
+    public void reduceMonstersInSuit() {
+        monstersInSuit -= 1;
+    }
     
     public void increaseTimesFailed() {
         timesFailed += 1;
