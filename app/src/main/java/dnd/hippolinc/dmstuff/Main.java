@@ -13,13 +13,20 @@ public class Main {
         System.out.println("Hello this is Lincoln's auto targeting program to find out who in your wonderful party is being targeted");
         System.out.println("This does use a deck of cards, high number is targeted first and the monsters only target creatures in their suit");
         System.out.println("You will need atleast one player and one monster");
-        System.out.println("You can do the following with this program like create a player, create a monster, or update the hunt status");
-        System.out.println("Enter the following words for each differnt program function: player, monster, or hunt");
+        System.out.println();
+
+        System.out.println("You can do the following with this program: ");
+        System.out.println("Create a player, create a monster, update the hunt status, list all monsters(or players), or even find out who is being targeted");
+        System.out.println("Enter the following words for each differnt program function: 'create player', 'create monster', 'update hunt', or 'list (monster or player)', 'target'");
         System.out.println("You can also enter stop to stop the program");
         for (int i = 0; i >= 0; i+=1){
-            System.out.println("Please enter if you would like to create a player, create a monster, update the hunt status, or stop");
+            System.out.println();
+            System.out.println("Please enter if you would like to create a player, create a monster, update the hunt status, print out all monsters or players");
+            System.out.println("Or even find out what monster is targeting who! Addtionally you can always stop!");
+
             String choice = input.nextLine();
-            if (choice.equalsIgnoreCase("monster")){
+
+            if (choice.equalsIgnoreCase("create monster")){
                 System.out.println("Please enter the name of the creature:");
                 String name = input.nextLine(); 
                 System.out.println("Please enter the suit of the creauture:");
@@ -30,60 +37,117 @@ public class Main {
                 int timesFailed = input.nextInt();
                 Monster monster = new Monster(name, suit, monstersInSuit, timesFailed);
                 monsters.add(monster);
-                for (int j = 0; j < monsters.size(); j++){
-                    System.out.println(monsters.get(j).getSuit());
-                }
             }
-            else if (choice.equalsIgnoreCase("player")){
+            else if (choice.equalsIgnoreCase("create player")){
                 System.out.println("Please enter the name of the player:");
                 String name = input.nextLine(); 
                 System.out.println("Please enter the suit of the player:");
                 String suit = input.nextLine();
                 System.out.println("Please enter the number on their card:");
                 int priotityNumber = input.nextInt();
-                Player player = new Player(name, suit, priotityNumber);
+                Player player = new Player(name, suit, priotityNumber, true);
                 players.add(player);
-                for (int j = 0; j < players.size(); j++){
-                    System.out.println(players.get(j).getSuit());
-                }
             }
-            else if (choice.equalsIgnoreCase("hunt")){
+            else if (choice.equalsIgnoreCase("update hunt")){
+                Main.updateHuntStatus(monsters);
+            }
+            else if (choice.equalsIgnoreCase("target")){
                 System.out.println("Please enter the name of the creature");
                 String name = input.nextLine(); 
                 for (int j = 0; j < monsters.size(); j++){
-                    if (name.equalsIgnoreCase(monsters.get(j).getName())){
-                        int timesNeededToSwitch = 4 - monsters.get(j).getMonsterInSuit();
-                        if (monsters.get(j).getTimesFailed() >= timesNeededToSwitch){
-
-                            System.out.println("Creature failed too many times");
-                            System.out.println("Draw a new card and enter the suit");
-                            String oldSuit = monsters.get(j).getSuit();
-                            String suit = input.nextLine();
-                            String newSuit = suit;
-                            monsters.get(j).setSuit(suit);
-                            Main.changeAllSuits(monsters, oldSuit, newSuit);
-                            monsters.get(j).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
-                            break;
-                        } 
-                        else {
-                            System.out.println("Creature hasen't failed enough");
-                            monsters.get(j).increaseTimesFailed();
-                            break;
-                        }
-                    }
-                    else {
-                        System.out.println("No creature with that name");
-                    }
+                if (name.equalsIgnoreCase(monsters.get(j).getName())){
+                    System.out.println(Main.target(players, monsters.get(j).getSuit(), monsters.get(j).getName()));
+                } 
+                else {
+                    System.out.println("No creature with that name");
+                }
                 }
             }
-            else if (choice.equalsIgnoreCase("suit")){
-                for (int j = 0; j < monsters.size(); j++){
-                    System.out.println(monsters.get(j).getMonsterInSuit());
-                }
+            else if (choice.equalsIgnoreCase("list monsters")){
+                Main.listMonsters(monsters);
+            }
+            else if (choice.equalsIgnoreCase("list players")){
+                Main.listPlayers(players);
             }
             else if (choice.equalsIgnoreCase("stop")){
                 break;
             }
+        }
+    }
+
+    
+    
+    private static String target(ArrayList<Player> players, String suit, String monsterName) {
+        int highestAlivePrioityNumber = 0;
+        String name = "placeholder";
+        for (int j = 0; j < players.size(); j++){
+            if (players.get(j).getSuit().equalsIgnoreCase(suit) && players.get(j).getStatus() == true){
+                if (players.get(j).getPriotityNumber() > highestAlivePrioityNumber){
+                    highestAlivePrioityNumber = players.get(j).getPriotityNumber();
+                    name = players.get(j).getName();
+                }
+            }
+        }
+        if (highestAlivePrioityNumber == 0){
+            return "No alive creatures in the suit";
+        }
+        else {
+            return monsterName + " is targeting " + name;
+        }
+    }
+
+
+
+    public static void updateHuntStatus (ArrayList<Monster> monsters){
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Please enter the name of the creature");
+        String name = input.nextLine(); 
+        for (int j = 0; j < monsters.size(); j++){
+            if (name.equalsIgnoreCase(monsters.get(j).getName())){
+                int timesNeededToSwitch = 4 - monsters.get(j).getMonsterInSuit();
+                if (monsters.get(j).getTimesFailed() >= timesNeededToSwitch){
+                    System.out.println("Creature failed too many times");
+                    System.out.println("Draw a new card and enter the suit");
+                    String oldSuit = monsters.get(j).getSuit();
+                    String suit = input.nextLine();
+                    String newSuit = suit;
+                    monsters.get(j).setSuit(suit);
+                    Main.changeAllSuits(monsters, oldSuit, newSuit);
+                    monsters.get(j).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                    break;
+                } 
+            else {
+                System.out.println("Creature hasen't failed enough");
+                monsters.get(j).increaseTimesFailed();
+                break;
+                }
+            }
+            else  {
+                System.out.println("No creature with that name");
+            }
+        }
+    }
+    
+    public static void listMonsters(ArrayList<Monster> monsters){
+        System.out.println();
+        for (int j = 0; j < monsters.size(); j++){
+            System.out.println(monsters.get(j).getName());
+            System.out.println(monsters.get(j).getSuit());
+            System.out.println(monsters.get(j).getMonsterInSuit());
+            System.out.println(monsters.get(j).getTimesFailed());
+            System.out.println();
+        }
+    }
+
+    public static void listPlayers(ArrayList<Player> players){
+        System.out.println();
+        for (int j = 0; j < players.size(); j++){
+            System.out.println(players.get(j).getName());
+            System.out.println(players.get(j).getSuit());
+            System.out.println(players.get(j).getPriotityNumber());
+            System.out.println();
+
         }
     }
 
