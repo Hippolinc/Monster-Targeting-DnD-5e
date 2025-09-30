@@ -19,11 +19,15 @@ public class Main {
         System.out.println("Create a player, create a monster, update the hunt status, list all monsters(or players), or even find out who is being targeted");
         System.out.println("Enter the following words for each differnt program function: 'create player', 'create monster', 'update hunt', or 'list (monster or player)', 'target'");
         System.out.println("You can also enter stop to stop the program");
-        for (int i = 0; i >= 0; i+=1){
-            System.out.println();
-            System.out.println("Please enter if you would like to create a player, create a monster, update the hunt status, print out all monsters or players");
-            System.out.println("Or even find out what monster is targeting who! Addtionally you can always stop!");
 
+            Monster weak = new Monster("hunts the weak", "clubs", 2, 0, true);
+            monsters.add(weak);
+
+            Monster strong = new Monster("hunts the strong", "clubs", 2, 0, false);
+            monsters.add(strong);
+
+        for (int i = 0; i >= 0;){
+            Main.userPrompt();
             String choice = input.nextLine();
 
             if (choice.equalsIgnoreCase("create monster")){
@@ -35,8 +39,12 @@ public class Main {
                 int monstersInSuit = input.nextInt();
                 System.out.println("Please enter the number of times this creature has failed the hunt since the last time it changed suit:");
                 int timesFailed = input.nextInt();
-                Monster monster = new Monster(name, suit, monstersInSuit, timesFailed);
+                System.out.println("Does the creature hunt the weak?");
+                boolean hunt = input.nextBoolean();
+                Monster monster = new Monster(name, suit, monstersInSuit, timesFailed, hunt);
                 monsters.add(monster);
+                input.nextLine();
+
             }
             else if (choice.equalsIgnoreCase("create player")){
                 System.out.println("Please enter the name of the player:");
@@ -47,27 +55,26 @@ public class Main {
                 int priotityNumber = input.nextInt();
                 Player player = new Player(name, suit, priotityNumber, true);
                 players.add(player);
+                input.nextLine();
             }
             else if (choice.equalsIgnoreCase("update hunt")){
                 Main.updateHuntStatus(monsters);
             }
             else if (choice.equalsIgnoreCase("target")){
-                System.out.println("Please enter the name of the creature");
-                String name = input.nextLine(); 
+                System.out.println();
                 for (int j = 0; j < monsters.size(); j++){
-                if (name.equalsIgnoreCase(monsters.get(j).getName())){
-                    System.out.println(Main.target(players, monsters.get(j).getSuit(), monsters.get(j).getName()));
+                    System.out.println(Main.target(players, monsters, j));
                 } 
-                else {
-                    System.out.println("No creature with that name");
-                }
-                }
             }
             else if (choice.equalsIgnoreCase("list monsters")){
                 Main.listMonsters(monsters);
             }
             else if (choice.equalsIgnoreCase("list players")){
                 Main.listPlayers(players);
+            }
+            else if (choice.equalsIgnoreCase("commands")){
+                System.out.println();
+                System.out.println("'create player', 'create monster', 'update hunt', or 'list (monster or player)', 'target', 'stop'");
             }
             else if (choice.equalsIgnoreCase("stop")){
                 break;
@@ -77,22 +84,32 @@ public class Main {
 
     
     
-    private static String target(ArrayList<Player> players, String suit, String monsterName) {
-        int highestAlivePrioityNumber = 0;
+    private static String target(ArrayList<Player> players, ArrayList<Monster> monsters, int monsterID) {
+        int currentPrioityNumber = 0;
         String name = "placeholder";
         for (int j = 0; j < players.size(); j++){
-            if (players.get(j).getSuit().equalsIgnoreCase(suit) && players.get(j).getStatus() == true){
-                if (players.get(j).getPriotityNumber() > highestAlivePrioityNumber){
-                    highestAlivePrioityNumber = players.get(j).getPriotityNumber();
-                    name = players.get(j).getName();
+            if (monsters.get(j).getHuntsTheWeak()){
+                if (players.get(j).getSuit().equalsIgnoreCase(monsters.get(monsterID).getSuit()) && players.get(j).getStatus() == true){
+                    if (players.get(j).getPriotityNumber() < currentPrioityNumber){
+                        currentPrioityNumber = players.get(j).getPriotityNumber();
+                        name = players.get(j).getName();
+                    }
+                }
+            }
+            else {
+                if (players.get(j).getSuit().equalsIgnoreCase(monsters.get(monsterID).getSuit()) && players.get(j).getStatus() == true){
+                    if (players.get(j).getPriotityNumber() > currentPrioityNumber){
+                        currentPrioityNumber = players.get(j).getPriotityNumber();
+                        name = players.get(j).getName();
+                    }
                 }
             }
         }
-        if (highestAlivePrioityNumber == 0){
+        if (currentPrioityNumber == 0){
             return "No alive creatures in the suit";
         }
         else {
-            return monsterName + " is targeting " + name;
+            return monsters.get(monsterID).getName() + " is targeting " + name;
         }
     }
 
@@ -136,6 +153,7 @@ public class Main {
             System.out.println(monsters.get(j).getSuit());
             System.out.println(monsters.get(j).getMonsterInSuit());
             System.out.println(monsters.get(j).getTimesFailed());
+            System.out.println(monsters.get(j).getHuntsTheWeak());
             System.out.println();
         }
     }
@@ -170,5 +188,12 @@ public class Main {
             }
         }
         return numberIn;
+    }
+
+    public static void userPrompt(){
+            System.out.println();
+            System.out.println("Please enter if you would like to create a player, create a monster, update the hunt status, print out all monsters or players");
+            System.out.println("If you forgot the commands you can also use 'commands'");
+            System.out.println("Or even find out what monster is targeting who! Addtionally you can always stop!");
     }
 }

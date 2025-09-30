@@ -1,18 +1,20 @@
 package dnd.hippolinc.dmstuff;
 
 public class Monster{
-    private String name;
+    private final String name;
     private String suit;
     private int monstersInSuit;
     private int timesFailed;
+    private final boolean huntWeak;
 
 
-    public Monster(String name, String suit, int monstersInSuit, int timesFailed)
+    public Monster(String name, String suit, int monstersInSuit, int timesFailed, boolean huntWeak)
     {
         this.name = name;
         this.suit = suit;
         this.monstersInSuit = monstersInSuit;
         this.timesFailed = timesFailed;
+        this.huntWeak = huntWeak;
     }
 
     public String getName() {
@@ -31,8 +33,8 @@ public class Monster{
         return timesFailed;
     }
 
-    public void setName(String name) {
-    this.name = name;
+     public boolean getHuntsTheWeak() {
+        return huntWeak;
     }
 
     public void setSuit(String suit) {
