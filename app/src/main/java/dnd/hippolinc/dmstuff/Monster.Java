@@ -1,11 +1,11 @@
 package dnd.hippolinc.dmstuff;
 
 public class Monster{
-    private final String name;
+    private String name;
     private String suit;
     private int monstersInSuit;
     private int timesFailed;
-    private final boolean huntWeak;
+    private boolean huntWeak;
 
 
     public Monster(String name, String suit, int monstersInSuit, int timesFailed, boolean huntWeak)

@@ -12,19 +12,13 @@ public class Main {
 
         System.out.println("Hello this is Lincoln's auto targeting program to find out who in your wonderful party is being targeted");
         System.out.println("This does use a deck of cards, high number is targeted first and the monsters only target creatures in their suit");
-        System.out.println("You will need atleast one player and one monster");
+        System.out.println("You will need at least one player and one monster");
         System.out.println();
 
         System.out.println("You can do the following with this program: ");
         System.out.println("Create a player, create a monster, update the hunt status, list all monsters(or players), or even find out who is being targeted");
         System.out.println("Enter the following words for each differnt program function: 'create player', 'create monster', 'update hunt', or 'list (monster or player)', 'target'");
         System.out.println("You can also enter stop to stop the program");
-
-            Monster weak = new Monster("hunts the weak", "clubs", 2, 0, true);
-            monsters.add(weak);
-
-            Monster strong = new Monster("hunts the strong", "clubs", 2, 0, false);
-            monsters.add(strong);
 
         for (int i = 0; i >= 0;){
             Main.userPrompt();
@@ -64,6 +58,7 @@ public class Main {
                 System.out.println();
                 for (int j = 0; j < monsters.size(); j++){
                     System.out.println(Main.target(players, monsters, j));
+                    System.out.println("");
                 } 
             }
             else if (choice.equalsIgnoreCase("list monsters")){
@@ -71,6 +66,39 @@ public class Main {
             }
             else if (choice.equalsIgnoreCase("list players")){
                 Main.listPlayers(players);
+            }
+            else if (choice.equalsIgnoreCase("presets")){
+                //If you want to use this between sessions or even just not want to type out each character/monster everyime just change this method
+                //Monsters
+                Monster cyan = new Monster("Cyan", "Clubs", 2, 0, true);
+                monsters.add(cyan);
+
+                Monster magenta = new Monster("Magenta", "Clubs", 2, 0, false);
+                monsters.add(magenta);
+
+                Monster green = new Monster("Green", "Hearts", 1, 0, true);
+                monsters.add(green);
+                
+                Monster orange = new Monster("orange", "Spades", 2, 0, false);
+                monsters.add(orange);
+
+                Monster black = new Monster("Black", "Spades", 2, 0, false);
+                monsters.add(black);
+                //Players
+                Player cypress = new Player("Cypress", "Diamonds", 10, true);
+                players.add(cypress);
+
+                Player phoebe = new Player("Phoebe", "Hearts", 9, true);
+                players.add(phoebe);
+
+                Player justin = new Player("Justin", "Hearts", 6, true);
+                players.add(justin);
+
+                Player jayda = new Player("Jayda", "Clubs", 10, true);
+                players.add(jayda);
+
+                Player charlie = new Player("Charlie", "Spades", 12, true);
+                players.add(charlie);
             }
             else if (choice.equalsIgnoreCase("commands")){
                 System.out.println();
@@ -86,17 +114,20 @@ public class Main {
     
     private static String target(ArrayList<Player> players, ArrayList<Monster> monsters, int monsterID) {
         int currentPrioityNumber = 0;
-        String name = "placeholder";
+        String name = "no one";
         for (int j = 0; j < players.size(); j++){
-            if (monsters.get(j).getHuntsTheWeak()){
+            if (monsters.get(monsterID).getHuntsTheWeak()){ //checking if this creature should hunt a low priotity creature or high
                 if (players.get(j).getSuit().equalsIgnoreCase(monsters.get(monsterID).getSuit()) && players.get(j).getStatus() == true){
+                    if (currentPrioityNumber == 0){
+                        currentPrioityNumber = 20; //This is so it will actully check all creatures and not presume there is a lower then zero
+                    }
                     if (players.get(j).getPriotityNumber() < currentPrioityNumber){
                         currentPrioityNumber = players.get(j).getPriotityNumber();
                         name = players.get(j).getName();
                     }
                 }
             }
-            else {
+            else if (!monsters.get(monsterID).getHuntsTheWeak()){ //checking if this creature should hunt a low priotity creature or high
                 if (players.get(j).getSuit().equalsIgnoreCase(monsters.get(monsterID).getSuit()) && players.get(j).getStatus() == true){
                     if (players.get(j).getPriotityNumber() > currentPrioityNumber){
                         currentPrioityNumber = players.get(j).getPriotityNumber();
@@ -149,11 +180,12 @@ public class Main {
     public static void listMonsters(ArrayList<Monster> monsters){
         System.out.println();
         for (int j = 0; j < monsters.size(); j++){
-            System.out.println(monsters.get(j).getName());
-            System.out.println(monsters.get(j).getSuit());
-            System.out.println(monsters.get(j).getMonsterInSuit());
-            System.out.println(monsters.get(j).getTimesFailed());
-            System.out.println(monsters.get(j).getHuntsTheWeak());
+            String name = monsters.get(j).getName();
+            System.out.println("The name of this monster is: " + name);
+            System.out.println("The suit of " + name + " is: " + monsters.get(j).getSuit());
+            System.out.println("The number of monsters sharing suits with " + name + " is: " + monsters.get(j).getMonsterInSuit());
+            System.out.println("The number of times " + name + " has failed its hunt since last switch: " + monsters.get(j).getTimesFailed());
+            System.out.println("Does " + name + " hunt strong creatures? " + monsters.get(j).getHuntsTheWeak());
             System.out.println();
         }
     }
