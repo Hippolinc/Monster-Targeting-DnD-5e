@@ -36,6 +36,10 @@ public class Player{
     } 
 
     public void died() {
-    alive = false;
+        alive = false;
+    } 
+
+    public void resurrect() {
+        alive = true;
     } 
 }

@@ -52,12 +52,17 @@ public class Main {
                 input.nextLine();
             }
             else if (choice.equalsIgnoreCase("update hunt")){
-                Main.updateHuntStatus(monsters);
+                System.out.println("The name of the creature that attempted to hunt");
+                String name = input.nextLine();
+                System.out.println("Did the creature kill or in other words successfully hunt");
+                boolean kill = input.nextBoolean();
+                Main.updateHuntStatus(monsters, players, name, kill);
+                input.nextLine();
             }
             else if (choice.equalsIgnoreCase("target")){
                 System.out.println();
                 for (int j = 0; j < monsters.size(); j++){
-                    System.out.println(Main.target(players, monsters, j));
+                    System.out.println(monsters.get(j).getName() + " is targeting " + Main.target(players, monsters, j));
                     System.out.println("");
                 } 
             }
@@ -137,45 +142,88 @@ public class Main {
             }
         }
         if (currentPrioityNumber == 0){
-            return "No alive creatures in the suit";
+            return name;
         }
         else {
-            return monsters.get(monsterID).getName() + " is targeting " + name;
+            return name;
         }
     }
 
 
 
-    public static void updateHuntStatus (ArrayList<Monster> monsters){
+    public static void updateHuntStatus (ArrayList<Monster> monsters, ArrayList<Player> players, String name, boolean kill){
+        int monsterID = -1;
+        int playerID = -1;
         Scanner input = new Scanner(System.in);
+        for (int i = 0; i < monsters.size(); i++){
+            if (monsters.get(i).getName().equalsIgnoreCase(name)){
+                monsterID = i;
+                break;
+            }
+        }
+        if (monsterID < 0){
+            System.out.println("No creature with that name");
+        }
+        else {
+                int timesNeededToSwitch = 4 - monsters.get(monsterID).getMonsterInSuit();
 
-        System.out.println("Please enter the name of the creature");
-        String name = input.nextLine(); 
-        for (int j = 0; j < monsters.size(); j++){
-            if (name.equalsIgnoreCase(monsters.get(j).getName())){
-                int timesNeededToSwitch = 4 - monsters.get(j).getMonsterInSuit();
-                if (monsters.get(j).getTimesFailed() >= timesNeededToSwitch){
-                    System.out.println("Creature failed too many times");
+                if (kill){
+                    String targetName = Main.target(players, monsters, monsterID);
+                    for (int j = 0; j < players.size(); j++){
+                        if (players.get(j).getName().equalsIgnoreCase(targetName)){
+                            playerID = j;
+                            break;
+                        }
+                    }
+                    System.out.println("Did the creature kill it's actual target");
+                    boolean correctKill = input.nextBoolean();
+                    input.nextLine();
+                    if (correctKill){
+                        players.get(playerID).died();
+                        String oldSuit = monsters.get(monsterID).getSuit();
+                        System.out.println(name + " suscessfully hunted creature and must find new prey");
+                        System.out.println("Activate the creature's killed ablity");
+                        System.out.println("Draw a new card and enter the suit");
+                        String newSuit = input.nextLine();
+                        monsters.get(monsterID).setSuit(newSuit);
+                        Main.changeAllSuits(monsters, oldSuit, newSuit);
+                        monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                    }
+                    else {
+                        System.out.println(name + " preformed an oppruntity kill and now switches suit to the creature that died");
+                        System.out.println("But who actully died?");
+                        targetName = input.nextLine();
+                        for (int j = 0; j < players.size(); j++){
+                            if (players.get(j).getName().equalsIgnoreCase(targetName)){
+                                playerID = j;
+                                break;
+                            }
+                        }
+                        System.out.println("Activate the creature's killed ablity");
+                        players.get(playerID).died();
+                        String oldSuit = monsters.get(monsterID).getSuit();
+                        String newSuit = players.get(playerID).getSuit();
+                        monsters.get(monsterID).setSuit(newSuit);
+                        Main.changeAllSuits(monsters, oldSuit, newSuit);
+                        monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                    }
+                }
+                else if (monsters.get(monsterID).getTimesFailed() >= timesNeededToSwitch){
+                    String oldSuit = monsters.get(monsterID).getSuit();
+                    System.out.println(name + " failed too many times");
                     System.out.println("Draw a new card and enter the suit");
-                    String oldSuit = monsters.get(j).getSuit();
                     String suit = input.nextLine();
                     String newSuit = suit;
-                    monsters.get(j).setSuit(suit);
+                    monsters.get(monsterID).setSuit(suit);
                     Main.changeAllSuits(monsters, oldSuit, newSuit);
-                    monsters.get(j).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
-                    break;
+                    monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
                 } 
-            else {
-                System.out.println("Creature hasen't failed enough");
-                monsters.get(j).increaseTimesFailed();
-                break;
-                }
-            }
-            else  {
-                System.out.println("No creature with that name");
+                else {
+                    System.out.println("Creature hasen't failed enough");
+                    monsters.get(monsterID).increaseTimesFailed();
+                    }
             }
         }
-    }
     
     public static void listMonsters(ArrayList<Monster> monsters){
         System.out.println();
