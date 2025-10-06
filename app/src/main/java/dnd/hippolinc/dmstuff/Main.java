@@ -84,26 +84,26 @@ public class Main {
                 Monster green = new Monster("Green", "Hearts", 1, 0, true);
                 monsters.add(green);
                 
-                Monster orange = new Monster("orange", "Spades", 2, 0, false);
+                Monster orange = new Monster("Orange", "Spades", 2, 0, false);
                 monsters.add(orange);
 
                 Monster black = new Monster("Black", "Spades", 2, 0, false);
                 monsters.add(black);
                 //Players
+                Player charlie = new Player("Charlie", "Spades", 12, true);
+                players.add(charlie);
+
                 Player cypress = new Player("Cypress", "Diamonds", 10, true);
                 players.add(cypress);
-
-                Player phoebe = new Player("Phoebe", "Hearts", 9, true);
-                players.add(phoebe);
-
-                Player justin = new Player("Justin", "Hearts", 6, true);
-                players.add(justin);
 
                 Player jayda = new Player("Jayda", "Clubs", 10, true);
                 players.add(jayda);
 
-                Player charlie = new Player("Charlie", "Spades", 12, true);
-                players.add(charlie);
+                Player justin = new Player("Justin", "Hearts", 6, true);
+                players.add(justin);
+
+                Player phoebe = new Player("Phoebe", "Hearts", 9, true);
+                players.add(phoebe);
             }
             else if (choice.equalsIgnoreCase("commands")){
                 System.out.println();
@@ -183,11 +183,13 @@ public class Main {
                         String oldSuit = monsters.get(monsterID).getSuit();
                         System.out.println(name + " suscessfully hunted creature and must find new prey");
                         System.out.println("Activate the creature's killed ablity");
+                        System.out.println("Activate all suit change abilities");
                         System.out.println("Draw a new card and enter the suit");
                         String newSuit = input.nextLine();
                         monsters.get(monsterID).setSuit(newSuit);
                         Main.changeAllSuits(monsters, oldSuit, newSuit);
                         monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                        monsters.get(monsterID).setTimesFailed(0);
                     }
                     else {
                         System.out.println(name + " preformed an oppruntity kill and now switches suit to the creature that died");
@@ -200,26 +202,32 @@ public class Main {
                             }
                         }
                         System.out.println("Activate the creature's killed ablity");
+                        System.out.println("Activate all suit change abilities");
                         players.get(playerID).died();
                         String oldSuit = monsters.get(monsterID).getSuit();
                         String newSuit = players.get(playerID).getSuit();
                         monsters.get(monsterID).setSuit(newSuit);
                         Main.changeAllSuits(monsters, oldSuit, newSuit);
                         monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                        monsters.get(monsterID).setTimesFailed(0);
                     }
                 }
                 else if (monsters.get(monsterID).getTimesFailed() >= timesNeededToSwitch){
                     String oldSuit = monsters.get(monsterID).getSuit();
                     System.out.println(name + " failed too many times");
+                    System.out.println("Activate the creatures failed ability");
+                    System.out.println("Activate all suit change abilities");
                     System.out.println("Draw a new card and enter the suit");
                     String suit = input.nextLine();
                     String newSuit = suit;
                     monsters.get(monsterID).setSuit(suit);
                     Main.changeAllSuits(monsters, oldSuit, newSuit);
                     monsters.get(monsterID).setMonsterInSuit(Main.numberInSuit(monsters, newSuit));
+                    monsters.get(monsterID).setTimesFailed(0);
                 } 
                 else {
                     System.out.println("Creature hasen't failed enough");
+                    System.out.println("Activate the creatures failed ability");
                     monsters.get(monsterID).increaseTimesFailed();
                     }
             }
